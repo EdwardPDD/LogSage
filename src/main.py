@@ -1,3 +1,5 @@
+from linux_parser import analyze_linux_logs 
+
 def display_banner(): 
     print('===================================')
     print('        LogSage Security Tool      ')
@@ -19,12 +21,12 @@ def main():
 
 
         if choice == '1':
-            print()
-            print('Analyzing Linux Logs...')
+            analyze_linux_logs()
 
         elif choice == '2':
             print()
             print('Analyzing Windows Logs...')
+            
 
         elif choice == '3':
             print()
