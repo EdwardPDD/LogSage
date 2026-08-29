@@ -1,3 +1,34 @@
+def extract_username(line):
+    normalized_line = line.strip().lower()
+
+    if 'failed password for invalid user' in normalized_line:
+        username = normalized_line.split('invalid user')[1].split()[0]
+        return username
+
+    if 'failed password for' in normalized_line:
+        username = normalized_line.split('failed password for')[1].split()[0]
+        return username
+
+    return None
+
+def extract_source_ip(line):
+    normalized_line = line.strip().lower()
+
+    if 'failed password' in normalized_line:
+        ip_address = normalized_line.split('from')[1].split()[0]
+        return ip_address
+
+    return None
+
+def extract_port(line):
+    normalized_line = line.strip().lower()
+
+    if 'failed password' in normalized_line:
+        port = normalized_line.split(' port ')[1].split()[0]
+        return port
+
+    return None
+
 def analyze_linux_logs(): 
     print()
     print('Analyzing Linux Logs...')
@@ -9,11 +40,26 @@ def analyze_linux_logs():
     root_login_events = []
     sudo_failure_events = []
     successful_ssh_events = []
+    usernames = []
+    ip_addresses = []
+    ports = []
 
     try:
         with open (log_path, 'r') as log_file:
            for line in log_file:
                 normalized_line = line.strip().lower()
+
+                username = extract_username(line)
+                if username is not None:
+                    usernames.append(username)
+
+                ip_address = extract_source_ip(line)
+                if ip_address is not None:
+                    ip_addresses.append(ip_address)
+
+                port = extract_port(line)
+                if port is not None:
+                    ports.append(port)
 
                 if 'failed password' in normalized_line:
                     failed_events.append(line.strip())
@@ -36,8 +82,11 @@ def analyze_linux_logs():
         print(f'Total failed root login attempts: {len(root_login_events)}')
         print(f'Total sudo authentication failures: {len(sudo_failure_events)}')
         print(f'Total successful SSH login attempts: {len(successful_ssh_events)}')
+        print(f'Extracted usernames: {usernames}')
+        print(f'extracted source IP addresses: {ip_addresses}')
+        print(f'Extracted ports: {ports}')
 
-        
+         
     except FileNotFoundError:
         print()
         print('File not found. Please check the path and try again.')
