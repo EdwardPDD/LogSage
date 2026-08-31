@@ -29,6 +29,29 @@ def extract_port(line):
 
     return None
 
+def extract_timestamp(line):
+    normalized_line = line.strip()
+
+    if 'Failed password' in normalized_line:
+        timestamp = normalized_line.split()[0]
+        return timestamp
+
+    return None
+
+def extract_event_type(line):
+    normalized_line = line.strip().lower()
+
+    if 'failed password for invalid user' in normalized_line:
+        return 'invalid_user_failure'
+
+    elif 'failed password for root' in normalized_line:
+        return 'root_login_failure'
+
+    elif 'failed password' in normalized_line:
+        return 'password_failure'
+
+    return None
+
 def analyze_linux_logs(): 
     print()
     print('Analyzing Linux Logs...')
@@ -43,6 +66,8 @@ def analyze_linux_logs():
     usernames = []
     ip_addresses = []
     ports = []
+    timestamps = []
+    event_types = []
 
     try:
         with open (log_path, 'r') as log_file:
@@ -60,6 +85,14 @@ def analyze_linux_logs():
                 port = extract_port(line)
                 if port is not None:
                     ports.append(port)
+
+                timestamp = extract_timestamp(line)
+                if timestamp is not None:
+                    timestamps.append(timestamp)
+
+                event_type = extract_event_type(line)
+                if event_type is not None:
+                    event_types.append(event_type)
 
                 if 'failed password' in normalized_line:
                     failed_events.append(line.strip())
@@ -85,7 +118,8 @@ def analyze_linux_logs():
         print(f'Extracted usernames: {usernames}')
         print(f'extracted source IP addresses: {ip_addresses}')
         print(f'Extracted ports: {ports}')
-
+        print(f'Extracted timestamps: {timestamps}')
+        print(f'Extracted event types: {event_types}')
          
     except FileNotFoundError:
         print()
