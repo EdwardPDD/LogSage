@@ -40,6 +40,8 @@ For event matching, each log entry is converted into a normalized lowercase vers
 
 The Linux Parser currently classifies failed SSH password attempts, invalid-user login attempts, failed root login attempts, sudo authentication failures, and successful SSH logins. Matching events are stored in separate Python lists, and 'len()' is used to calculate the number of events in each category. 
 
+The parser now extracts structured information from failed SSH authentication events, which include the username, source IP address, source port, timestamp, and event type. I initially stored these values in separate parallel lists, but restructured the parser so that the related fields from each log entry are stored together in a Python dictionary. Each dictionary represents one authentication event and is added to a parsed_events list. This keeps the information for each event together and makes it easier for the detection module to analyze relationships between events later.
+
 ## Testing and Troubleshooting 
 
 I tested the parser against real authentication events in '/var/log/auth.log' on the Ubuntu Server VM. From my Windows host I used PowerShell and SSh to connect to the Ubuntu server with intentionally invalid usernames and the root account. this allowed me to generate controlled failed SSH authentication events and then examine how Ubuntu recorded those events in the authentication log. 
@@ -52,8 +54,8 @@ I analyzed the actual authentication log using Linux tools such as grep and refi
 
 ## Current Status and Next Steps
 
-The Linux authentication parser can currently identify and categorize several security-relevant authentication events from Ubuntu authentication logs. The current implementation provides the foundation for more detailed security analysis.
+The Linux authentication parser can currently identify and categorize several security-relevant authentication events from Ubuntu authentication logs. In addition to counting event categories, the parser extracts usernames, source IP addresses, source ports, timestamps, and event types from failed SSH authentication records.
 
-The next development phase will focus on extracting useful information from individual log entries, such as usernames, source IP addresses, ports, timestamps, and event types. This information will be stored in a structured format so that events can be compared and analyzed more effectively.
+The extracted fields are stored as structured Python dictionaries inside a parsed_events list, with each dictionary representing an individual authentication event. I validated the structured output against controlled SSH authentication events generated from the Windows host and recorded in /var/log/auth.log on the Ubuntu Server VM. Testing confirmed that the parser preserved the correct field relationships while continuing to report the expected authentication-event counts.
 
-Once event information is structured, the detection module will be developed to identify suspicious patterns such as repeated authentication failures from the same source or successful logins following multiple failed attempts.
+The next development phase will focus on detector.py. The detection module will use the structured event data to identify suspicious patterns such as repeated authentication failures from the same source IP address or username. Later detection logic can also correlate events over time and identify patterns such as a successful login following multiple failed authentication attempts.

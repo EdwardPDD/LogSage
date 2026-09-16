@@ -63,11 +63,7 @@ def analyze_linux_logs():
     root_login_events = []
     sudo_failure_events = []
     successful_ssh_events = []
-    usernames = []
-    ip_addresses = []
-    ports = []
-    timestamps = []
-    event_types = []
+    parsed_events = []
 
     try:
         with open (log_path, 'r') as log_file:
@@ -75,24 +71,20 @@ def analyze_linux_logs():
                 normalized_line = line.strip().lower()
 
                 username = extract_username(line)
-                if username is not None:
-                    usernames.append(username)
-
                 ip_address = extract_source_ip(line)
-                if ip_address is not None:
-                    ip_addresses.append(ip_address)
-
                 port = extract_port(line)
-                if port is not None:
-                    ports.append(port)
-
                 timestamp = extract_timestamp(line)
-                if timestamp is not None:
-                    timestamps.append(timestamp)
-
                 event_type = extract_event_type(line)
+                event = {
+                    'username': username,
+                    'source_ip': ip_address,
+                    'port': port,
+                    'timestamp': timestamp,
+                    'event_type': event_type
+                }
+
                 if event_type is not None:
-                    event_types.append(event_type)
+                    parsed_events.append(event)
 
                 if 'failed password' in normalized_line:
                     failed_events.append(line.strip())
@@ -115,11 +107,10 @@ def analyze_linux_logs():
         print(f'Total failed root login attempts: {len(root_login_events)}')
         print(f'Total sudo authentication failures: {len(sudo_failure_events)}')
         print(f'Total successful SSH login attempts: {len(successful_ssh_events)}')
-        print(f'Extracted usernames: {usernames}')
-        print(f'extracted source IP addresses: {ip_addresses}')
-        print(f'Extracted ports: {ports}')
-        print(f'Extracted timestamps: {timestamps}')
-        print(f'Extracted event types: {event_types}')
+        print('parsed events:')
+
+        for event in parsed_events:
+            print(event)
          
     except FileNotFoundError:
         print()
