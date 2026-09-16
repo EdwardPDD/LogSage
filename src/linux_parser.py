@@ -111,6 +111,8 @@ def analyze_linux_logs():
 
         for event in parsed_events:
             print(event)
+
+        return parsed_events
          
     except FileNotFoundError:
         print()

@@ -1,5 +1,5 @@
 from linux_parser import analyze_linux_logs 
-
+from detector import detect_repeated_failures
 def display_banner(): 
     print('===================================')
     print('        LogSage Security Tool      ')
@@ -21,7 +21,7 @@ def main():
 
 
         if choice == '1':
-            analyze_linux_logs()
+            security_events = analyze_linux_logs()
 
         elif choice == '2':
             print()
