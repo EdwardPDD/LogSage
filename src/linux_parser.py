@@ -9,21 +9,25 @@ def extract_username(line):
         username = normalized_line.split('failed password for')[1].split()[0]
         return username
 
+    if 'accepted password for' in normalized_line:
+        username = normalized_line.split('accepted password for')[1].split()[0]
+        return username
+    
     return None
 
 def extract_source_ip(line):
     normalized_line = line.strip().lower()
 
-    if 'failed password' in normalized_line:
+    if 'failed password' in normalized_line or 'accepted password' in normalized_line:
         ip_address = normalized_line.split('from')[1].split()[0]
         return ip_address
-
+    
     return None
 
 def extract_port(line):
     normalized_line = line.strip().lower()
 
-    if 'failed password' in normalized_line:
+    if 'failed password' in normalized_line or 'accepted password' in normalized_line:
         port = normalized_line.split(' port ')[1].split()[0]
         return port
 
@@ -32,7 +36,7 @@ def extract_port(line):
 def extract_timestamp(line):
     normalized_line = line.strip()
 
-    if 'Failed password' in normalized_line:
+    if 'Failed password' in normalized_line or 'Accepted password' in normalized_line:
         timestamp = normalized_line.split()[0]
         return timestamp
 
@@ -49,6 +53,9 @@ def extract_event_type(line):
 
     elif 'failed password' in normalized_line:
         return 'password_failure'
+
+    elif 'accepted password' in normalized_line:
+        return 'successful_login'
 
     return None
 
