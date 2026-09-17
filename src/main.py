@@ -22,6 +22,8 @@ def main():
 
         if choice == '1':
             security_events = analyze_linux_logs()
+            security_alerts = detect_repeated_failures(security_events) 
+            print(security_alerts)  
 
         elif choice == '2':
             print()

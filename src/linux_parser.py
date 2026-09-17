@@ -65,7 +65,7 @@ def analyze_linux_logs():
     successful_ssh_events = []
     parsed_events = []
 
-    try:
+    try: 
         with open (log_path, 'r') as log_file:
            for line in log_file:
                 normalized_line = line.strip().lower()
