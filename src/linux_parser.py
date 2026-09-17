@@ -114,10 +114,10 @@ def analyze_linux_logs():
         print(f'Total failed root login attempts: {len(root_login_events)}')
         print(f'Total sudo authentication failures: {len(sudo_failure_events)}')
         print(f'Total successful SSH login attempts: {len(successful_ssh_events)}')
-        print('parsed events:')
+       # print('parsed events:')
 
-        for event in parsed_events:
-            print(event)
+       # for event in parsed_events:
+       #     print(event)
 
         return parsed_events
          

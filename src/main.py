@@ -23,7 +23,26 @@ def main():
         if choice == '1':
             security_events = analyze_linux_logs()
             security_alerts = detect_repeated_failures(security_events) 
-            print(security_alerts)
+            print()
+            print('=== Security Alerts ===')
+
+            for alert in security_alerts:
+                print()
+
+                print(f"Alert Type: {alert['alert_type']}")
+
+                if 'username' in alert:
+                    print(f"Username: {alert['username']}")
+
+                if 'source_ip' in alert:
+                    print(f"Source IP: {alert['source_ip']}")
+
+                if 'failed_attempts' in alert:
+                    print(f"Failed Attempts: {alert['failed_attempts']}")
+
+                if 'previous_failures' in alert:
+                    print(f"Previous Failures: {alert['previous_failures']}") 
+
 
         elif choice == '2':
             print()
